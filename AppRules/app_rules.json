@@ -1,9 +1,20 @@
 [
-{"package": "com.netease.cloudmusic", "rule": "default"},
-{"package": "com.smzdm.client.android", "rule": "custom", "custom_rules": [
-	{"keyword": "跳过", "class": "com.smzdm.client.android.app.WelComeActivity"}, 
-	{"keyword": "马上更新", "class": "android.app.Dialog", "action": "back"}
+{"package": "com.netease.cloudmusic", "rule": "custom", "custom_rules":[
+    {"class": "com.netease.cloudmusic.activity.MainActivity"},
+    {"class": "com.netease.cloudmusic.activity.LoadingAdActivity"}
 ]},
-{"package": "com.sankuai.meituan.takeoutnew", "rule": "default"},
-{"package": "tv.danmaku.bili", "rule": "custom", "custom_rules": [{"keyword": "我知道了"}]}
+{"package": "com.smzdm.client.android", "rule": "custom", "custom_rules": [
+    {"class": "com.smzdm.client.android.app.WelComeActivity"}, 
+    {"keyword": "马上更新", "class": "android.app.Dialog", "action": "back"}
+]},
+{"package": "com.sankuai.meituan.takeoutnew", "rule": "custom", "custom_rules": [
+    {"class": "com.sankuai.meituan.takeoutnew.ui.page.boot.SplashAdActivity"},
+    {"keyword": "发现新版本", "class": "com.sankuai.waimai.business.page.homepage.widget.dialog.UpdateForceInstallDialog", "action": "back"}
+]},
+{"package": "tv.danmaku.bili", "rule": "custom", "custom_rules": [
+    {"class": "tv.danmaku.bili.MainActivityV2"}
+]},
+{"package": "com.jingdong.app.mall", "rule": "custom", "custom_rules": [
+    {"class": "com.jingdong.app.mall.MainFrameActivity"}
+]}
 ]
