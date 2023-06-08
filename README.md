@@ -1,0 +1,2 @@
+# SkipAds
+android skip ads
