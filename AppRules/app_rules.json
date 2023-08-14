@@ -5,7 +5,8 @@
 ]},
 {"package": "com.smzdm.client.android", "rule": "custom", "custom_rules": [
     {"class": "com.smzdm.client.android.app.WelComeActivity"}, 
-    {"keyword": "马上更新", "class": "android.app.Dialog", "action": "back"}
+    {"keyword": "马上更新", "class": "android.app.Dialog", "action": "back"},
+    {"keyword": "广告", "class": "android.app.Dialog", "action": "back"}
 ]},
 {"package": "com.sankuai.meituan.takeoutnew", "rule": "custom", "custom_rules": [
     {"class": "com.sankuai.meituan.takeoutnew.ui.page.boot.SplashAdActivity"},
