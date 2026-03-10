@@ -4,14 +4,14 @@ plugins {
 
 android {
     namespace 'com.vindroid.skipads'
-    compileSdk 33
+    compileSdk 36
 
     defaultConfig {
         applicationId "com.vindroid.skipads"
         minSdk 29
-        targetSdk 33
-        versionCode 100000100
-        versionName "1.0.0.1"
+        targetSdk 36
+        versionCode 100010000
+        versionName "1.0.1.0"
     }
 
     buildTypes {

@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -38,22 +39,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View v) {
         Intent intent;
-        switch (v.getId()) {
-            case R.id.btn_permission:
-                try {
-                    intent = new Intent(android.provider.Settings.ACTION_ACCESSIBILITY_SETTINGS);
-                    startActivity(intent);
-                } catch (Exception e) {
-                    intent = new Intent(android.provider.Settings.ACTION_SETTINGS);
-                    startActivity(intent);
-                }
-                break;
-            case R.id.btn_config:
-                intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-                intent.addCategory(Intent.CATEGORY_OPENABLE);
-                intent.setType("application/json");
-                startActivityForResult(intent, 12301);
-                break;
+        if (R.id.btn_permission == v.getId()) {
+            try {
+                intent = new Intent(android.provider.Settings.ACTION_ACCESSIBILITY_SETTINGS);
+                startActivity(intent);
+            } catch (Exception e) {
+                intent = new Intent(android.provider.Settings.ACTION_SETTINGS);
+                startActivity(intent);
+            }
+        } else if (R.id.btn_config == v.getId()) {
+            intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+            intent.addCategory(Intent.CATEGORY_OPENABLE);
+            intent.setType("application/json");
+            startActivityForResult(intent, 12301);
         }
     }
 

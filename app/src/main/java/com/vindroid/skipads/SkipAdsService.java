@@ -9,11 +9,14 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Path;
 import android.graphics.Rect;
+import android.os.Build;
 import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
+
+import androidx.core.content.ContextCompat;
 
 import java.util.HashMap;
 import java.util.List;
@@ -145,7 +148,7 @@ public class SkipAdsService extends AccessibilityService {
         mRuleReceiver = new RuleBroadcastReceiver();
         IntentFilter filter = new IntentFilter();
         filter.addAction(Constants.ACTION_RULE_UPDATE);
-        registerReceiver(mRuleReceiver, filter);
+        ContextCompat.registerReceiver(this, mRuleReceiver, filter, Context.RECEIVER_EXPORTED);
 
         updateServiceInfo();
     }
