@@ -11,14 +11,13 @@
         android:id="@+id/btn_config"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="?attr/actionBarSize"
         android:text="Select rule config" />
 
     <Button
         android:id="@+id/btn_permission"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Grant accessibility" />
+        android:text="Auth a11y service" />
 
     <TextView
         android:id="@+id/text_config_path"
