@@ -83,7 +83,7 @@ public class Rule {
         if (TYPE_DEFAULT.equals(mType)) {
             builder.append(", keyword: ").append(DEFAULT_KEYWORD);
         }
-        if (mCustomRules.size() > 0) {
+        if (!mCustomRules.isEmpty()) {
             builder.append(", custom rule:");
             String keyword, className, action;
             for (Map.Entry<String, CustomRule> entry : mCustomRules.entrySet()) {

@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Path;
 import android.graphics.Rect;
-import android.os.Build;
 import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
@@ -34,6 +33,12 @@ public class SkipAdsService extends AccessibilityService {
 
     @Override
     public void onAccessibilityEvent(AccessibilityEvent accessibilityEvent) {
+        if (accessibilityEvent == null
+                || accessibilityEvent.getSource() == null
+                || TextUtils.isEmpty(accessibilityEvent.getPackageName())
+                || TextUtils.isEmpty(accessibilityEvent.getClassName())) {
+            return;
+        }
         AccessibilityNodeInfo nodeInfo = accessibilityEvent.getSource();
         String packageName = accessibilityEvent.getPackageName().toString().toLowerCase();
         String className = accessibilityEvent.getClassName().toString().toLowerCase();
@@ -42,7 +47,9 @@ public class SkipAdsService extends AccessibilityService {
         String key = packageName + "/" + className;
         Log.d(TAG, "[onAccessibilityEvent] app: " + key + ", event: " + eventType + ", windowId: " + windowId);
 
-        if (mTriggeredApps.getOrDefault(key, -1) == windowId) {
+        Integer value = mTriggeredApps.getOrDefault(key, -1);
+        int id = value != null ? value : -1;
+        if (id == windowId) {
             Log.d(TAG, "[onAccessibilityEvent] same window id, ignore");
             return;
         }
@@ -52,13 +59,15 @@ public class SkipAdsService extends AccessibilityService {
             return;
         }
         List<String> ruleClasses = rule.getClasses();
-        if (!ruleClasses.isEmpty() && !ruleClasses.contains(Rule.DEFAULT_CLASS) && !ruleClasses.contains(className)) {
+        if (!ruleClasses.isEmpty()
+                && !ruleClasses.contains(Rule.DEFAULT_CLASS)
+                && !ruleClasses.contains(className)) {
             Log.d(TAG, "[onAccessibilityEvent] no matching class, ignore");
             return;
         }
 
         Log.d(TAG, "[onAccessibilityEvent] rule: " + rule);
-        mTriggeredApps.put(key, accessibilityEvent.getWindowId());
+        mTriggeredApps.put(key, windowId);
         if (skipAds(nodeInfo, className, rule)) {
             mAppSkipAdsTimes.remove(packageName);
         } else {
@@ -67,13 +76,19 @@ public class SkipAdsService extends AccessibilityService {
         }
     }
 
-    private void skipAdsLater(final AccessibilityNodeInfo nodeInfo, final String packageName, final String className, final Rule rule) {
+    private void skipAdsLater(
+            final AccessibilityNodeInfo nodeInfo,
+            final String packageName,
+            final String className,
+            final Rule rule) {
         new Handler().postDelayed(() -> {
             if (skipAds(nodeInfo, className, rule)) {
                 mAppSkipAdsTimes.remove(packageName);
                 return;
             }
-            int times = mAppSkipAdsTimes.getOrDefault(packageName, 1);
+
+            Integer value = mAppSkipAdsTimes.getOrDefault(packageName, 1);
+            int times = value != null ? value : 1;
             mAppSkipAdsTimes.put(packageName, ++times);
 
             if (times < MAX_TRY_TIMES) {
@@ -84,7 +99,8 @@ public class SkipAdsService extends AccessibilityService {
         }, DELAY_MILLIS);
     }
 
-    private boolean skipAds(final AccessibilityNodeInfo nodeInfo, final String className, final Rule rule) {
+    private boolean skipAds(
+            final AccessibilityNodeInfo nodeInfo, final String className, final Rule rule) {
         if (Rule.TYPE_DEFAULT.equals(rule.getType())) {
             return performAction(nodeInfo, Rule.DEFAULT_KEYWORD, Rule.ACTION_CLICK);
         } else if (Rule.TYPE_CUSTOM.equals(rule.getType())) {
@@ -106,7 +122,11 @@ public class SkipAdsService extends AccessibilityService {
         }
     }
 
-    private boolean performAction(final AccessibilityNodeInfo nodeInfo, final String keyword, final String action) {
+    private boolean performAction(
+            final AccessibilityNodeInfo nodeInfo, final String keyword, final String action) {
+        if (nodeInfo == null || TextUtils.isEmpty(keyword)) {
+            return false;
+        }
         List<AccessibilityNodeInfo> nodeInfoList = nodeInfo.findAccessibilityNodeInfosByText(keyword);
         for (AccessibilityNodeInfo info : nodeInfoList) {
             if (info.getText() == null || !info.getText().toString().contains(keyword)) {
@@ -118,9 +138,11 @@ public class SkipAdsService extends AccessibilityService {
                     Rect rect = new Rect();
                     info.getBoundsInScreen(rect);
                     Path path = new Path();
-                    path.moveTo((rect.left + rect.right) / 2.0f, (rect.top + rect.bottom) / 2.0f);
+                    path.moveTo((rect.left + rect.right) / 2.0f,
+                            (rect.top + rect.bottom) / 2.0f);
                     GestureDescription.Builder builder = new GestureDescription.Builder();
-                    builder.addStroke(new GestureDescription.StrokeDescription(path, 0, 100));
+                    builder.addStroke(
+                            new GestureDescription.StrokeDescription(path, 0, 100));
                     dispatchGesture(builder.build(), null, null);
                 }
             } else if (Rule.ACTION_BACK.equals(action)) {
@@ -148,7 +170,8 @@ public class SkipAdsService extends AccessibilityService {
         mRuleReceiver = new RuleBroadcastReceiver();
         IntentFilter filter = new IntentFilter();
         filter.addAction(Constants.ACTION_RULE_UPDATE);
-        ContextCompat.registerReceiver(this, mRuleReceiver, filter, Context.RECEIVER_EXPORTED);
+        ContextCompat.registerReceiver(
+                this, mRuleReceiver, filter, ContextCompat.RECEIVER_EXPORTED);
 
         updateServiceInfo();
     }

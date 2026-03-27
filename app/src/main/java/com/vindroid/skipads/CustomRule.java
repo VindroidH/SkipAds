@@ -1,12 +1,15 @@
 package com.vindroid.skipads;
 
 import android.text.TextUtils;
+import android.util.Log;
 
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 public class CustomRule {
+    private static final String TAG = "SkipAds.CustomRule";
+
     public static final String KEY_KEYWORD = "keyword";
     public static final String KEY_CLASS = "class";
     public static final String KEY_ACTION = "action";
@@ -33,7 +36,7 @@ public class CustomRule {
             }
             return md5.toString();
         } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
+            Log.e(TAG, "[getId] catch exception", e);
         }
         return id;
     }

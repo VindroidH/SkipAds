@@ -45,33 +45,27 @@ public class RuleSettings {
             try {
                 loadRules(new JSONArray(jsonStr));
             } catch (JSONException e) {
-                Log.e(TAG, "has exception.", e);
+                Log.e(TAG, "catch exception", e);
             }
         }
     }
 
     public boolean load(Uri uri) {
         Log.d(TAG, "[loadConfig] file uri: " + uri);
-        try {
-            InputStream inputStream = mContext.getContentResolver().openInputStream(uri);
-            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+        try (InputStream inputStream = mContext.getContentResolver().openInputStream(uri);
+             BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
             StringBuilder stringBuilder = new StringBuilder();
             String line;
             while ((line = reader.readLine()) != null) {
                 stringBuilder.append(line);
             }
-            reader.close();
-            inputStream.close();
-
             String json = stringBuilder.toString();
             Log.d(TAG, "[loadConfig] data: " + json);
-
             mSp.edit().putString(Constants.KEY_CONFIG_DATA, json).apply();
             loadRules(new JSONArray(json));
-
             return true;
-        } catch (JSONException | IOException e) {
-            Log.e(TAG, "[loadConfig] has exception.", e);
+        } catch (IOException | JSONException e) {
+            Log.e(TAG, "[load] catch exception", e);
         }
         return false;
     }
@@ -85,7 +79,7 @@ public class RuleSettings {
     }
 
     public Rule getRule(String packageName) {
-        if (TextUtils.isEmpty(packageName) || mRules.size() == 0) {
+        if (TextUtils.isEmpty(packageName) || mRules.isEmpty()) {
             return null;
         }
         return mRules.get(packageName);
@@ -100,7 +94,7 @@ public class RuleSettings {
                 JSONObject ruleJson = json.getJSONObject(i);
                 mRules.put(ruleJson.getString(KEY_PACKAGE), new Rule(ruleJson));
             } catch (JSONException e) {
-                Log.e(TAG, "[rules] has exception.", e);
+                Log.e(TAG, "[loadRules] catch exception", e);
             }
         }
     }
